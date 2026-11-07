@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101a2b">
+  <title>Frische Luft – Fensterlüftung im Vergleich</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0b1220;--panel:#121e30;--line:#263750;--text:#eef5ff;--muted:#a9bad0;--cyan:#59d8f4;--orange:#ffad66;--green:#99e6bd}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#1d3552 0,var(--bg) 62%);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
+    .wrap{width:min(1200px,100% - 36px);margin:0 auto;padding:36px 0 28px}.eyebrow{color:var(--cyan);font-size:.77rem;letter-spacing:.16em;text-transform:uppercase;font-weight:750;margin:0 0 8px}h1{font-size:clamp(2rem,4vw,3.35rem);line-height:1.04;letter-spacing:-.04em;margin:0;max-width:800px}header p{color:var(--muted);max-width:760px;margin:14px 0 0}.toolbar{margin:26px 0 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}.button{appearance:none;border:1px solid #344964;background:#17263a;color:var(--text);border-radius:11px;padding:10px 15px;font:inherit;font-weight:650;cursor:pointer;transition:.18s}.button:hover{background:#203650;border-color:#58708c}.button.primary{background:#b6edff;color:#092031;border-color:#b6edff}.button.primary:hover{background:#d2f5ff}.button[aria-pressed="true"]{border-color:var(--cyan);box-shadow:0 0 0 2px #59d8f426}.control-label{color:var(--muted);font-size:.9rem;margin-left:auto}input[type=range]{accent-color:var(--cyan);width:130px}.stage{display:grid;grid-template-columns:1fr 1fr;gap:15px}.card{background:linear-gradient(145deg,#17263a,#101a29);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 16px 50px #0003}.card-head{padding:17px 19px 11px;display:flex;align-items:center;justify-content:space-between;gap:12px}.card h2{font-size:1.1rem;margin:0;letter-spacing:-.015em}.tag{font-size:.73rem;font-weight:750;letter-spacing:.06em;text-transform:uppercase;color:#b9c9dc;border:1px solid #344962;border-radius:999px;padding:4px 9px;white-space:nowrap}.canvas-wrap{position:relative;padding:0 10px}.canvas-wrap canvas{display:block;width:100%;height:auto;aspect-ratio:560/330}.legend{display:flex;gap:16px;flex-wrap:wrap;padding:5px 19px 17px;color:var(--muted);font-size:.82rem}.key{display:inline-flex;align-items:center;gap:7px}.dot{width:9px;height:9px;border-radius:50%;display:inline-block}.dot.cold{background:var(--cyan)}.dot.warm{background:var(--orange)}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}.metric{border:1px solid var(--line);background:#101a29ad;border-radius:13px;padding:13px 15px}.metric b{display:block;font-size:.92rem;margin-bottom:3px}.metric span{color:var(--muted);font-size:.84rem}.note{border-left:3px solid #6f9fc0;padding:10px 14px;color:#b6c4d6;background:#142237;border-radius:0 9px 9px 0;font-size:.85rem}.footer{color:#71849d;font-size:.78rem;margin-top:18px}.is-hidden{display:none!important}
+    @media(max-width:720px){.wrap{width:min(100% - 22px,560px);padding-top:25px}.stage{grid-template-columns:1fr}.control-label{margin-left:0}.toolbar{gap:8px}.button{padding:9px 12px}.metrics{grid-template-columns:1fr}}
+    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <p class="eyebrow">Lüftung · anschaulich erklärt</p>
+      <h1>Wie kommt frische Luft ins Zimmer?</h1>
+      <p>Der Strömungsfilm vergleicht ein gekipptes Fenster mit einem vollständig geöffneten Fenster. Die bewegten Partikel zeigen schematisch, wie Außenluft einströmt und wärmere Raumluft nach außen verdrängt wird.</p>
+    </header>
+    <nav class="toolbar" aria-label="Animation steuern">
+      <button class="button primary" id="play" type="button">❚❚ Pause</button>
+      <button class="button" id="compare" type="button" aria-pressed="true">Vergleich: nebeneinander</button>
+      <button class="button" id="reset" type="button">⟲ Neu starten</button>
+      <label class="control-label" for="speed">Geschwindigkeit</label>
+      <input id="speed" type="range" min="0.5" max="1.8" step="0.1" value="1" aria-label="Animationsgeschwindigkeit">
+    </nav>
+    <section class="stage" id="stage" aria-label="Vergleich der Fensterlüftung">
+      <article class="card">
+        <div class="card-head"><h2>Fenster gekippt</h2><span class="tag">kleine Öffnung</span></div>
+        <div class="canvas-wrap"><canvas id="tilt" aria-label="Schematische Luftströmung durch ein gekipptes Fenster"></canvas></div>
+        <div class="legend"><span class="key"><i class="dot cold"></i>Frische Außenluft</span><span class="key"><i class="dot warm"></i>Warme Raumluft</span></div>
+      </article>
+      <article class="card">
+        <div class="card-head"><h2>Fenster ganz geöffnet</h2><span class="tag">große Öffnung</span></div>
+        <div class="canvas-wrap"><canvas id="open" aria-label="Schematische Luftströmung durch ein vollständig geöffnetes Fenster"></canvas></div>
+        <div class="legend"><span class="key"><i class="dot cold"></i>Frische Außenluft</span><span class="key"><i class="dot warm"></i>Warme Raumluft</span></div>
+      </article>
+    </section>
+    <section class="metrics" aria-label="Vergleich der Lüftungsarten">
+      <div class="metric"><b>Gekippt</b><span>Geringerer Luftaustausch; zum Erneuern der Raumluft ist meist mehr Zeit nötig.</span></div>
+      <div class="metric"><b>Ganz geöffnet</b><span>Größere Öffnung ermöglicht meist einen schnelleren Luftwechsel – besonders bei gegenüberliegenden Öffnungen.</span></div>
+    </section>
+    <aside class="note"><strong>Hinweis:</strong> Die Animation ist eine vereinfachte, qualitative Darstellung – keine Messung oder CFD-Simulation. Die tatsächliche Strömung hängt unter anderem von Wind, Temperaturunterschied, Raumgeometrie und weiteren Öffnungen ab. Beim Stoßlüften das Fenster nur so lange öffnen, wie nötig.</aside>
+    <p class="footer">Tipp: Mit „Pause“ lässt sich die Strömung anhalten; „Neu starten“ setzt die Partikelbewegung zurück.</p>
+  </main>
+<script>
+(() => {
+  const canvases = [document.getElementById('tilt'), document.getElementById('open')];
+  const stage = document.getElementById('stage');
+  const playButton = document.getElementById('play');
+  const compareButton = document.getElementById('compare');
+  const speedInput = document.getElementById('speed');
+  const states = canvases.map((canvas, index) => ({canvas, ctx: canvas.getContext('2d'), open: index === 1, particles: [], width: 0, height: 0}));
+  let running = true, speed = 1, last = 0, clock = 0;
+  const colors = {cold:'#59d8f4', warm:'#ffad66'};
+
+  function resize(s) {
+    const rect = s.canvas.getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    s.width = rect.width; s.height = rect.width * 330 / 560;
+    s.canvas.width = Math.round(s.width * dpr); s.canvas.height = Math.round(s.height * dpr);
+    s.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    s.particles = [];
+    for (let i = 0; i < 25; i++) s.particles.push({path:i%2, t:Math.random(), r:2.1 + Math.random()*1.7, phase:Math.random()*6.28});
+  }
+  function roundedRect(ctx,x,y,w,h,r,fill,stroke){ctx.beginPath();ctx.roundRect(x,y,w,h,r);if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.stroke()}}
+  function drawRoom(s) {
+    const {ctx:c,width:w,height:h,open} = s;
+    c.clearRect(0,0,w,h);
+    const x= w*.19, y=h*.16, rw=w*.68, rh=h*.68, wall=10;
+    // Outside backdrop and room shell.
+    c.fillStyle='#0c1725'; c.fillRect(0,0,w,h);
+    c.fillStyle='#14263a'; c.fillRect(x+wall,y+wall,rw-wall*2,rh-wall*2);
+    c.fillStyle='#263a50';
+    c.fillRect(x,y,wall,rh); c.fillRect(x+rw-wall,y,wall,rh); c.fillRect(x,y+rh-wall,rw,wall); c.fillRect(x,y,rw,wall);
+    // Window opening on left wall; larger for the fully open case.
+    const wy=y+(open?rh*.30:rh*.37), wh=open?rh*.36:rh*.17;
+    c.clearRect(x-1,wy,wall+2,wh);
+    c.strokeStyle='#8197ad';c.lineWidth=2;c.strokeRect(x-1,wy,wall+2,wh);
+    c.fillStyle='#263a50';c.fillRect(x-3,wy-3,wall+6,3);c.fillRect(x-3,wy+wh,wall+6,3);
+    if(open){c.strokeStyle='#98adc0';c.lineWidth=3;c.beginPath();c.moveTo(x+2,wy);c.lineTo(x-17,wy-8);c.moveTo(x+2,wy+wh);c.lineTo(x-17,wy+wh+8);c.stroke();}
+    else {c.strokeStyle='#98adc0';c.lineWidth=3;c.beginPath();c.moveTo(x+2,wy+wh);c.lineTo(x-13,wy+wh*.22);c.stroke();}
+    // Simple furniture silhouette for spatial context.
+    c.fillStyle='#203249';roundedRect(c,x+rw*.48,y+rh*.67,rw*.35,rh*.12,5,true,false);
+    c.fillStyle='#2d4258';roundedRect(c,x+rw*.51,y+rh*.79,rw*.04,rh*.10,2,true,false);roundedRect(c,x+rw*.76,y+rh*.79,rw*.04,rh*.10,2,true,false);
+    c.fillStyle='#a9bad0';c.font=`600 ${Math.max(10,w*.022)}px system-ui`;c.textAlign='center';c.fillText('RAUM',x+rw*.53,y+rh*.19);
+    c.fillStyle='#7e95ae';c.font=`${Math.max(9,w*.018)}px system-ui`;c.fillText('AUSSEN',x-24,wy+wh/2);c.textAlign='left';
+    return {x,y,rw,rh,wy,wh};
+  }
+  function pathPoint(t, flow, room, s, phase) {
+    const {x,y,rw,rh,wy,wh}=room, outX=x-28;
+    let p0,p1,p2,p3;
+    if(!flow){ // cool air: enters low, travels along floor then rises
+      p0={x:outX,y:wy+wh*.72};
+      p1={x:x+rw*.12,y:y+rh*.82};
+      p2={x:x+rw*.55,y:y+rh*.98};
+      p3={x:x+rw*.67,y:y+rh*.31};
+    } else { // warmer air returns through the upper part of the opening
+      p0={x:x+rw*.62,y:y+rh*.25};
+      p1={x:x+rw*.38,y:y+rh*.05};
+      p2={x:x+rw*.04,y:y+rh*.18};
+      p3={x:outX,y:wy+wh*.24};
+    }
+    // A small wave makes the path feel alive without suggesting exact calculated trajectories.
+    const t2=Math.max(0,Math.min(1,t));
+    const u=1-t2;
+    let px=u*u*u*p0.x+3*u*u*t2*p1.x+3*u*t2*t2*p2.x+t2*t2*t2*p3.x;
+    let py=u*u*u*p0.y+3*u*u*t2*p1.y+3*u*t2*t2*p2.y+t2*t2*t2*p3.y;
+    py+=Math.sin(t*7+phase)*2.1;
+    return {x:px,y:py};
+  }
+  function draw(s, dt) {
+    const c=s.ctx, room=drawRoom(s), {x,y,rw,rh,wy,wh}=room;
+    const count=s.open?25:18;
+    for(let i=0;i<count;i++){
+      const flow=i%2, p=s.particles[i];
+      p.t=(p.t+dt*(s.open?.105:.055)*speed*(flow?1.12:1))%1;
+      const pos=pathPoint(p.t,flow,room,s,p.phase);
+      const alpha=.42+.52*(.5+.5*Math.sin(clock*2+p.phase));
+      c.globalAlpha=alpha;c.fillStyle=flow?colors.warm:colors.cold;
+      c.beginPath();c.arc(pos.x,pos.y,p.r*(s.open?1:.85),0,Math.PI*2);c.fill();
+      // Small directional chevron on selected particles.
+      if(i%5===0){c.globalAlpha=.72;c.strokeStyle=flow?colors.warm:colors.cold;c.lineWidth=1.5;c.beginPath();c.moveTo(pos.x-3,pos.y-2);c.lineTo(pos.x,pos.y);c.lineTo(pos.x-3,pos.y+2);c.stroke()}
+    }
+    c.globalAlpha=1;
+    // Illustrative flow-intensity strokes near the opening.
+    c.globalAlpha=s.open?.58:.32;c.strokeStyle=colors.cold;c.lineWidth=s.open?2.2:1.4;
+    for(let j=0;j<(s.open?4:2);j++){const yy=wy+wh*(.38+j*.08);c.beginPath();c.moveTo(x-25-j*5,yy);c.lineTo(x-8,yy);c.stroke()}
+    c.globalAlpha=1;
+  }
+  function frame(ts){if(!last)last=ts;const dt=Math.min((ts-last)/1000,.05);last=ts;if(running){clock+=dt;states.forEach(s=>draw(s,dt))}requestAnimationFrame(frame)}
+  playButton.addEventListener('click',()=>{running=!running;playButton.textContent=running?'❚❚ Pause':'▶ Weiter';if(running)last=0});
+  compareButton.addEventListener('click',()=>{const compare=stage.classList.toggle('single');if(compare){stage.style.gridTemplateColumns='1fr';canvases[1].closest('.card').classList.add('is-hidden');compareButton.textContent='Vergleich: Einzelansicht';compareButton.setAttribute('aria-pressed','false')}else{canvases[1].closest('.card').classList.remove('is-hidden');stage.style.gridTemplateColumns='';compareButton.textContent='Vergleich: nebeneinander';compareButton.setAttribute('aria-pressed','true')}states.forEach(resize)});
+  document.getElementById('reset').addEventListener('click',()=>{clock=0;states.forEach(resize)});
+  speedInput.addEventListener('input',()=>{speed=Number(speedInput.value)});
+  const observer=new ResizeObserver(()=>states.forEach(resize));observer.observe(stage);states.forEach(resize);requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
