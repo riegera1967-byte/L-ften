@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
-"""Create an animated GIF comparing tilted-window and wide-open ventilation.
+"""Create a short, presentation-style ventilation comparison GIF.
 
 Install Pillow with `python -m pip install pillow`, then run:
     python generate_lueftung_gif.py
-The GIF is written to lueftung-vergleich.gif in this script's directory.
+The roughly 6-second looping GIF is written to lueftung-vergleich.gif.
 """
 from pathlib import Path
 import math
 from PIL import Image, ImageDraw, ImageFont
 
 W, H = 1000, 570
-FRAMES, DURATION = 40, 90
+FRAMES, DURATION = 72, 80  # 5.76 seconds per loop at about 12.5 fps
 BG = (11, 18, 32)
 PANEL = (19, 30, 48)
 ROOM = (20, 38, 58)
@@ -61,14 +61,12 @@ def draw_panel(image, x0, title, wide, frame):
     d.rounded_rectangle((x0, 94, x0+panel_w, 94+panel_h), radius=18, fill=PANEL, outline=(43,59,80), width=2)
     d.text((x0+22, 111), title, font=FONT_HEAD, fill=TEXT)
     badge = 'GROSSE ÖFFNUNG' if wide else 'KLEINE ÖFFNUNG'
-    badge_box = d.textbbox((0,0), badge, font=FONT_SMALL)
-    badge_w = badge_box[2] + 18
+    badge_w = d.textbbox((0,0), badge, font=FONT_SMALL)[2] + 18
     d.rounded_rectangle((x0+panel_w-badge_w-18, 112, x0+panel_w-18, 137), radius=12, fill=(31,47,67), outline=(62,82,106))
     d.text((x0+panel_w-badge_w-9, 117), badge, font=FONT_SMALL, fill=MUTED)
 
     rx, ry, rw, rh = x0+96, 182, 328, 264
     d.rectangle((rx, ry, rx+rw, ry+rh), fill=ROOM, outline=WALL, width=10)
-    # Opening and window frame on the left wall.
     opening_h = 105 if wide else 48
     oy = ry + (rh-opening_h)//2
     d.rectangle((rx-6, oy-5, rx+8, oy+opening_h+5), fill=PANEL)
@@ -81,12 +79,11 @@ def draw_panel(image, x0, title, wide, frame):
         d.line((rx+4, oy+opening_h, rx-15, oy+7), fill=(159,180,199), width=3)
     d.text((rx+rw//2-24, ry+28), 'RAUM', font=FONT_SMALL, fill=MUTED)
     d.text((x0+15, oy+opening_h//2-8), 'AUSSEN', font=FONT_SMALL, fill=MUTED)
-    # Simple sofa silhouette.
     d.rounded_rectangle((rx+183, ry+188, rx+291, ry+218), radius=6, fill=(36,56,78))
     d.rectangle((rx+193, ry+215, rx+201, ry+232), fill=(47,67,88))
     d.rectangle((rx+273, ry+215, rx+281, ry+232), fill=(47,67,88))
 
-    # Streamlines are deliberately schematic, not a physical simulation.
+    # Schematic flow paths (not a measured or computational fluid simulation).
     in_start = (rx-23, oy + opening_h*.72)
     in_ctrl1 = (rx+rw*.12, ry+rh*.90)
     in_ctrl2 = (rx+rw*.60, ry+rh*.98)
@@ -108,7 +105,6 @@ def draw_panel(image, x0, title, wide, frame):
             if i % 4 == 0:
                 draw_arrow(d, px, py, color, 1 if flow == 0 else -1)
 
-    # Legend
     ly = 468
     d.ellipse((x0+26,ly+3,x0+36,ly+13), fill=CYAN)
     d.text((x0+43,ly), 'Frische Außenluft', font=FONT_SMALL, fill=MUTED)
@@ -123,7 +119,12 @@ def make_frame(frame):
     d.text((34, 46), 'Wie strömt die Luft?', font=FONT_TITLE, fill=TEXT)
     draw_panel(image, 24, 'Fenster gekippt', False, frame)
     draw_panel(image, 506, 'Fenster ganz geöffnet', True, frame)
-    d.text((26, 558-20), 'Schematische Darstellung · tatsächliche Luftströmung hängt von Wind, Temperatur und Raum ab.', font=FONT_SMALL, fill=MUTED)
+    d.text((26, 537), 'Schematische Darstellung · Luftströmung hängt von Wind, Temperatur und Raum ab.', font=FONT_SMALL, fill=MUTED)
+    # Subtle progress indicator helps the looping GIF feel like a short video export.
+    x, y, width = 26, 560, 948
+    d.rounded_rectangle((x,y,x+width,y+3), radius=2, fill=(36,50,69))
+    progress = int(width * (frame % FRAMES) / FRAMES)
+    d.rounded_rectangle((x,y,x+progress,y+3), radius=2, fill=CYAN)
     return image
 
 
@@ -132,7 +133,7 @@ def main():
     output = Path(__file__).resolve().with_name('lueftung-vergleich.gif')
     palette_frames = [frame.quantize(colors=256, method=Image.Quantize.MEDIANCUT) for frame in frames]
     palette_frames[0].save(output, save_all=True, append_images=palette_frames[1:], duration=DURATION, loop=0, optimize=True, disposal=2)
-    print(f'Created {output}')
+    print(f'Created {output} ({FRAMES * DURATION / 1000:.2f} seconds per loop)')
 
 
 if __name__ == '__main__':
